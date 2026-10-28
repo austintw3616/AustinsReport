@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Carolina Coast Live</title>
+<style>
+:root{--bg:#081521;--panel:#102536;--line:#294557;--text:#eef7fa;--muted:#9eb8c6;--aqua:#70e0d0;--gold:#ffd38b}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(ellipse at top,#173b50,var(--bg) 65%);color:var(--text);font-family:system-ui,Arial,sans-serif}
+header{height:12vh;padding:1vh 2vw;display:flex;align-items:center;justify-content:space-between;gap:20px;border-bottom:1px solid var(--line)}
+.brand{font-size:clamp(16px,1.6vw,26px);font-weight:900;letter-spacing:.1em}.brand span{color:var(--aqua)}
+.right{display:flex;align-items:center;gap:24px}.clock{text-align:right}.time{font-size:clamp(20px,2vw,34px);font-weight:800}.date,.sub{font-size:clamp(10px,.8vw,13px);color:var(--muted)}
+.count{color:var(--gold);font-size:clamp(13px,1.2vw,20px);font-weight:800}
+main{height:80vh;padding:1.2vh 1.4vw;display:grid;grid-template-columns:1.1fr 1fr 1fr;grid-template-rows:1fr 1fr;gap:1vw}
+.panel{background:linear-gradient(145deg,#143044,#0c1f2e);border:1px solid var(--line);border-radius:14px;padding:1.1vw;overflow:hidden;min-width:0}
+h2{font-size:clamp(13px,1.05vw,18px);margin:0 0 12px;text-transform:uppercase;letter-spacing:.06em;display:flex;justify-content:space-between;gap:8px}
+.weather{grid-column:span 2}.weathergrid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.wcard,.scard{background:#ffffff08;border:1px solid #ffffff10;border-radius:10px;padding:10px;min-width:0}
+.city{font-weight:750;font-size:clamp(10px,.85vw,14px)}.temp{font-size:clamp(24px,2.3vw,38px);font-weight:850;margin:7px 0}.icon{font-size:20px}.details{font-size:clamp(9px,.73vw,12px);line-height:1.7;color:#d0e0e8}
+.surfgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.scard h3{font-size:clamp(10px,.8vw,13px);margin:0 0 7px}
+.wave{font-size:clamp(20px,1.7vw,28px);font-weight:850}.rating{display:inline-block;border-radius:5px;padding:4px 6px;font-size:9px;font-weight:900;color:#101820}
+.very{background:#e85b55}.poor{background:#f0a34b}.fair{background:#f1d65a}.good{background:#8bcf78}
+a{color:var(--aqua);text-decoration:none}a:hover{text-decoration:underline}
+.scores{display:flex;flex-direction:column;gap:7px}.event{display:flex;justify-content:space-between;align-items:center;gap:10px;background:#ffffff08;border-radius:8px;padding:8px;font-size:clamp(10px,.8vw,13px)}
+.event small{display:block;color:var(--muted);margin-top:3px;font-size:10px}.score{font-weight:850;text-align:right}
+.banner{grid-column:span 1;display:flex;flex-direction:column;justify-content:center}.eyebrow{color:var(--aqua);font-size:11px;font-weight:850;letter-spacing:.12em}.bannerline{font-size:clamp(13px,1.15vw,18px);line-height:1.7;margin-top:12px}.empty{color:var(--muted);font-size:12px;line-height:1.6}
+footer{height:8vh;display:flex;align-items:center;justify-content:space-between;padding:0 2vw;color:var(--muted);font-size:10px;border-top:1px solid var(--line)}
+@media(max-width:800px){header{height:auto;flex-wrap:wrap;padding:14px}main{height:auto;display:grid;grid-template-columns:1fr;grid-template-rows:auto;padding:12px}.panel{padding:14px;min-height:200px}.weather,.banner{grid-column:span 1}footer{height:auto;padding:12px;flex-wrap:wrap}}
+</style>
+</head>
+<body>
+<header>
+ <div class="brand">CAROLINA <span>COAST</span> / LIVE</div>
+ <div class="right">
+  <div class="clock"><div class="time" id="clock">--:--:--</div><div class="date" id="date"></div></div>
+  <div><div class="sub" style="color:var(--gold)">COUNTDOWN TO LSAT</div><div class="count" id="countdown">Loading…</div><div class="sub">January 13 · 9:00 AM ET</div></div>
+ </div>
+</header>
+<main>
+<section class="panel weather">
+ <h2>Weather <span class="sub" id="wxupdate">Loading live data…</span></h2>
+ <div class="weathergrid" id="weather"></div>
+ <div class="sub" style="margin-top:10px">Temperature · feels like · rain chance · wind · humidity · UV when available</div>
+</section>
+<section class="panel banner">
+ <div class="eyebrow">LATEST SPORTS</div>
+ <h2 style="margin-top:10px">Scores & results</h2>
+ <div class="bannerline" id="banner">Loading current scoreboards…</div>
+ <div class="sub" id="scoreupdate" style="margin-top:18px">Refreshing automatically</div>
+</section>
+<section class="panel">
+ <h2>Surf report <span class="sub" id="surfupdate">Marine forecast</span></h2>
+ <div class="surfgrid" id="surf"></div>
+ <div class="sub" style="margin-top:9px">Model-estimated ratings, not official Surfline ratings. Tap a spot for its report.</div>
+</section>
+<section class="panel">
+ <h2>Today's schedule <span class="sub">Google Calendar</span></h2>
+ <p style="font-size:13px">Calendar connection not configured yet.</p>
+ <p class="empty">Google Calendar needs secure Google sign-in and authorization. This public static page cannot safely store private credentials. A separate OAuth setup is needed to display today's and upcoming events.</p>
+ <a href="https://calendar.google.com/" target="_blank">Open Google Calendar ↗</a>
+</section>
+<section class="panel" style="grid-column:span 1">
+ <h2>Recent scoreboards <span class="sub">Rotating results</span></h2>
+ <div class="scores" id="scores"><div class="empty">Fetching recent results…</div></div>
+ <div class="sub" style="margin-top:10px">NFL · NCAA football · NBA · NCAA basketball · Grand Slam tennis only</div>
+</section>
+</main>
+<footer><span>Weather/marine refresh: 10 min</span><span>Sports refresh: 3 min</span><span id="status">Connecting to data feeds…</span></footer>
+<script>
+const $=id=>document.getElementById(id);
+const places=[
+ {name:"Raleigh, NC",lat:35.7796,lon:-78.6382},
+ {name:"Wilmington, NC",lat:34.2257,lon:-77.9447},
+ {name:"Atlantic Beach, NC",lat:34.6991,lon:-76.7402}
+];
+const spots=[
+ {name:"Atlantic Beach",lat:34.6991,lon:-76.7402,url:"https://www.surfline.com/"},
+ {name:"Pine Knoll Shores",lat:34.7025,lon:-76.8130,url:"https://www.surfline.com/"},
+ {name:"Wrightsville Beach",lat:34.2085,lon:-77.7964,url:"https://www.surfline.com/surf-report/wrightsville-beach/5842041f4e65fad6a77088c7"},
+ {name:"Wrightsville South End",lat:34.1940,lon:-77.8030,url:"https://www.surfline.com/"}
+];
+const codeText={0:"Clear",1:"Mostly clear",2:"Partly cloudy",3:"Overcast",45:"Fog",48:"Fog",51:"Drizzle",53:"Drizzle",55:"Heavy drizzle",61:"Light rain",63:"Rain",65:"Heavy rain",71:"Snow",73:"Snow",75:"Heavy snow",80:"Showers",81:"Showers",82:"Heavy showers",95:"Thunderstorms",96:"Thunderstorms",99:"Severe thunderstorms"};
+function wxicon(c){if(c===0)return"☀️";if(c<=2)return"🌤️";if(c===3)return"☁️";if(c===45||c===48)return"🌫️";if(c>=95)return"⛈️";if(c>=51)return"🌧️";return"🌦️"}
+function fmt(n,s=""){return n==null?"—":Math.round(n)+s}
+function updateClock(){
+ const now=new Date();
+ $("clock").textContent=new Intl.DateTimeFormat("en-US",{timeZone:"America/New_York",hour:"2-digit",minute:"2-digit",second:"2-digit"}).format(now);
+ $("date").textContent=new Intl.DateTimeFormat("en-US",{timeZone:"America/New_York",weekday:"long",month:"long",day:"numeric",year:"numeric"}).format(now);
+ let target=new Date(now.getFullYear(),0,13,9,0,0);
+ if(now>=target)target=new Date(now.getFullYear()+1,0,13,9,0,0);
+ let s=Math.max(0,Math.floor((target-now)/1000)),d=Math.floor(s/86400);s%=86400;
+ let h=Math.floor(s/3600);s%=3600;let m=Math.floor(s/60);s%=60;
+ $("countdown").textContent=`${d}d ${String(h).padStart(2,"0")}h ${String(m).padStart(2,"0")}m ${String(s).padStart(2,"0")}s`;
+}
+async function loadWeather(){
+ try{
+  const cards=await Promise.all(places.map(async p=>{
+   const u=`https://api.open-meteo.com/v1/forecast?latitude=${p.lat}&longitude=${p.lon}&current=temperature_2m,relative_humidity_2m,apparent_temperature,precipitation,weather_code,wind_speed_10m,wind_direction_10m&hourly=precipitation_probability,uv_index&forecast_days=1&timezone=America%2FNew_York`;
+   const d=await(await fetch(u)).json(),c=d.current;
+   let i=d.hourly.time.findIndex(t=>t.slice(0,13)===c.time.slice(0,13));
+   return `<div class="wcard"><div class="city">${p.name}</div><div class="icon">${wxicon(c.weather_code)}</div><div class="temp">${fmt(c.temperature_2m,"°")}</div><div class="details">${codeText[c.weather_code]||"Conditions"}<br>Feels like <b>${fmt(c.apparent_temperature,"°")}</b><br>Rain chance <b>${i>=0?d.hourly.precipitation_probability[i]:"—"}%</b><br>Wind ${fmt(c.wind_speed_10m," mph")} · ${Math.round(c.wind_direction_10m)}°<br>Humidity ${fmt(c.relative_humidity_2m,"%")}<br>Rain now ${c.precipitation??0} mm<br>UV ${i>=0?d.hourly.uv_index[i]:"—"}</div></div>`;
+  }));
+  $("weather").innerHTML=cards.join("");$("wxupdate").textContent="Updated "+new Date().toLocaleTimeString([],{hour:"2-digit",minute:"2-digit"});
+  $("status").textContent="Weather updated";
+ }catch(e){$("wxupdate").textContent="Weather feed unavailable"}
+}
+function surfRating(c){
+ if(c.wave_height==null)return["No data","very"];
+ let h=Number(c.wave_height),p=Number(c.wave_period||0);
+ if(h<.35||(h<.5&&p<6))return["Very poor","very"];
+ if(h<.65||(h<.85&&p<7))return["Poor to fair","poor"];
+ if(h<1.05||p<7)return["Fair","fair"];
+ return["Fair to good","good"];
+}
+async function loadSurf(){
+ try{
+  const cards=await Promise.all(spots.map(async p=>{
+   const u=`https://marine-api.open-meteo.com/v1/marine?latitude=${p.lat}&longitude=${p.lon}&current=wave_height,wave_period,wave_direction,wind_wave_height,swell_wave_height,swell_wave_period,swell_wave_direction&forecast_days=1&timezone=America%2FNew_York`;
+   const d=await(await fetch(u)).json(),c=d.current||{},r=surfRating(c);
+   return `<div class="scard"><h3><a target="_blank" href="${p.url}">${p.name} ↗</a></h3><div class="rating ${r[1]}">${r[0].toUpperCase()}</div><div class="wave">${c.wave_height==null?"—":(c.wave_height*3.28084).toFixed(1)+" ft"}</div><div class="details">Period ${c.wave_period==null?"—":Math.round(c.wave_period)+" s"}<br>Direction ${c.wave_direction==null?"—":Math.round(c.wave_direction)+"°"}<br>Swell ${c.swell_wave_height==null?"—":(c.swell_wave_height*3.28084).toFixed(1)+" ft"} · ${c.swell_wave_period==null?"—":Math.round(c.swell_wave_period)+" s"}<br>Wind waves ${c.wind_wave_height==null?"—":(c.wind_wave_height*3.28084).toFixed(1)+" ft"}</div></div>`;
+  }));
+  $("surf").innerHTML=cards.join("");$("surfupdate").textContent="Updated "+new Date().toLocaleTimeString([],{hour:"2-digit",minute:"2-digit"});
+ }catch(e){$("surfupdate").textContent="Marine data unavailable"}
+}
+const leagues=[
+ ["NFL","football/nfl"],["NCAA Football","football/college-football"],
+ ["NBA","basketball/nba"],["NCAA Basketball","basketball/mens-college-basketball"],
+ ["Tennis","tennis/atp"]
+];
+const slams=["Australian Open","Roland Garros","French Open","Wimbledon","US Open"];
+let games=[],rotation=0;
+async function loadScores(){
+ let found=[];
+ await Promise.all(leagues.map(async ([league,path])=>{
+  try{
+   const d=await(await fetch(`https://site.api.espn.com/apis/site/v2/sports/${path}/scoreboard`)).json();
+   for(const e of d.events||[]){
+    const comp=e.competitions?.[0],status=comp?.status?.type?.description||e.status?.type?.description||"";
+    const date=new Date(e.date),age=(Date.now()-date.getTime())/36e5;
+    const live=/progress|halftime|quarter|period|live|in progress/i.test(status);
+    if(league==="Tennis"){
+      const name=(e.name||"")+" "+(e.shortName||"")+" "+(e.season?.name||"");
+      if(!slams.some(s=>name.toLowerCase().includes(s.toLowerCase())))continue;
+    }
+    if(age<0||age>168||(!live&&!/final|completed/i.test(status)))continue;
+    const teams=(comp?.competitors||[]).map(t=>({name:t.team?.shortDisplayName||t.team?.displayName||"Team",score:t.score??"",winner:t.winner}));
+    found.push({league,name:e.name||league,status,date,teams,live});
+   }
+  }catch(e){}
+ }));
+ const rank={"NFL":0,"NCAA Football":1,"NBA":2,"NCAA Basketball":3,"Tennis":4};
+ games=found.sort((a,b)=>Number(b.live)-Number(a.live)||(rank[a.league]-rank[b.league])||(b.date-a.date));
+ renderScores();
+ $("scoreupdate").textContent="Updated "+new Date().toLocaleTimeString([],{hour:"2-digit",minute:"2-digit"});
+}
+function renderScores(){
+ const list=games.slice(0,6);
+ $("scores").innerHTML=list.length?list.map(g=>`<div class="event"><div><b>${g.league}</b><small>${g.name}</small></div><div class="score">${g.teams.map(t=>`${t.name} ${t.score}`).join("<br>")}<small>${g.status}</small></div></div>`).join(""):'<div class="empty">No recent finals or live games were returned by the feeds. Check again shortly.</div>';
+ if(list.length){
+  const g=list[rotation%list.length];
+  $("banner").innerHTML=`<b>${g.league}</b><br>${g.name}<br><span style="color:var(--aqua)">${g.teams.map(t=>`${t.name} ${t.score}`).join(" · ")}</span><br><span class="sub">${g.status}</span>`;
+  rotation++;
+ }else{$("banner").textContent="No current results available. Scoreboards refresh automatically."}
+}
+updateClock();loadWeather();loadSurf();loadScores();
+setInterval(updateClock,1000);
+setInterval(loadWeather,600000);
+setInterval(loadSurf,600000);
+setInterval(loadScores,180000);
+setInterval(renderScores,12000);
+</script>
+</body>
+</html>
